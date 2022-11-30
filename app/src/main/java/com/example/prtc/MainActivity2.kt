@@ -18,6 +18,7 @@ import android.widget.ImageView
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.core.graphics.drawable.toBitmap
 import com.example.prtc.databinding.ActivityMain2Binding
+import com.example.prtc.databinding.ActivityMainBinding
 import com.slowmac.autobackgroundremover.OnBackgroundChangeListener
 import java.io.File
 import java.io.FileOutputStream
@@ -30,16 +31,73 @@ class MainActivity2 : AppCompatActivity() {
     var showimage: ImageView? = null
     private var Save_btn: Button? = null
     private var RemoveBgBtn: ImageView? = null
+    val Image:Uri?=null
+    var bitmapImg:Bitmap?=null
+
+
+
+
+    //현재 시간 구하는 함수
+    private fun get_now_time(): String {
+        val now = System.currentTimeMillis() // 현재 시간을 가져온다.
+        val mDate = Date(now) // Date형식으로 고친다.
+        // 날짜, 시간을 가져오고 싶은 형태로 가져올 수 있다.
+        @SuppressLint("SimpleDateFormat") val simpleDate =
+            SimpleDateFormat("yyyy-MM-dd_hh_mm_ss", Locale.KOREA)
+        return simpleDate.format(mDate)
+    }
+
+    var time = get_now_time()
+    private val outputFilePath = Environment.getExternalStoragePublicDirectory(
+        Environment.DIRECTORY_PICTURES
+    ).toString()
+
 
     private lateinit var binding: ActivityMain2Binding
-    private val imageResult =
-        registerForActivityResult(
-            ActivityResultContracts.GetContent()
-        ) { uri: Uri? ->
-            uri?.let { uri ->
-                binding.showimage.setImageURI(uri)
+
+
+    //main 문
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+        setContentView(R.layout.activity_main2)
+
+
+        //데이터 수신
+//        val intent = intent
+
+        //받은 데이터를 Uri 형태로 변환
+        val uri = intent.getStringExtra("image")
+        val Image = Uri.parse(uri)
+        binding = ActivityMain2Binding.inflate(layoutInflater)
+        setContentView(binding.root)
+        binding.showimage.setImageURI(Image)
+        // ImageView 영역에 이미지를 설정한다. MainActivity 에서 고른 사진을 설정하는 것임..
+//        showimage!!.setImageURI(Image)
+
+
+
+
+        //Save_btn 기능 적용
+        Save_btn = findViewById<View>(R.id.save) as Button
+        Save_btn!!.setOnClickListener {
+            val resolver = contentResolver
+            try {
+//                val instream = resolver.openInputStream(Image)
+//                val imgBitmap = BitmapFactory.decodeStream(instream)
+//                instream!!.close() // 스트림 닫아주기
+                bitmapImg?.let { it1 -> saveBitmapToJpeg(it1) } // 내부 저장소에 저장
+                //                    Toast.makeText(getApplicationContext(), "파일 불러오기 성공", Toast.LENGTH_SHORT).show();
+            } catch (e: Exception) {
+                Toast.makeText(applicationContext, "파일 불러오기 실패", Toast.LENGTH_SHORT).show()
             }
         }
+
+        //배경삭제 버튼
+        RemoveBgBtn = findViewById<View>(R.id.removeBgBtn) as ImageView
+        RemoveBgBtn!!.setOnClickListener{
+            removeBg()
+        }
+    }
 
     //배경삭제 함수
     private fun removeBg() {
@@ -50,6 +108,8 @@ class MainActivity2 : AppCompatActivity() {
             object : OnBackgroundChangeListener {
                 override fun onSuccess(bitmap: Bitmap) {
                     binding.showimage.setImageBitmap(bitmap)
+                    bitmapImg = bitmap
+
                 }
 
                 override fun onFailed(exception: Exception) {
@@ -58,7 +118,6 @@ class MainActivity2 : AppCompatActivity() {
 
             })
     }
-
     // 선택한 이미지 내부 저장소에 저장
     private fun saveBitmapToJpeg(bitmap: Bitmap) {
         val imgName = "saved$time.jpg"
@@ -80,63 +139,6 @@ class MainActivity2 : AppCompatActivity() {
             Toast.makeText(applicationContext, "파일 저장 성공", Toast.LENGTH_SHORT).show()
         } catch (e: Exception) {
             Toast.makeText(applicationContext, "파일 저장 실패", Toast.LENGTH_SHORT).show()
-        }
-    }
-
-    //현재 시간 구하는 함수
-    private fun get_now_time(): String {
-        val now = System.currentTimeMillis() // 현재 시간을 가져온다.
-        val mDate = Date(now) // Date형식으로 고친다.
-        // 날짜, 시간을 가져오고 싶은 형태로 가져올 수 있다.
-        @SuppressLint("SimpleDateFormat") val simpleDate =
-            SimpleDateFormat("yyyy-MM-dd_hh_mm_ss", Locale.KOREA)
-        return simpleDate.format(mDate)
-    }
-
-    var time = get_now_time()
-    private val outputFilePath = Environment.getExternalStoragePublicDirectory(
-        Environment.DIRECTORY_PICTURES
-    ).toString()
-
-
-
-    //main 문
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-        setContentView(R.layout.activity_main2)
-
-
-        //데이터 수신
-        val intent = intent
-
-        //받은 데이터를 Uri 형태로 변환
-        val uri = intent.extras!!.getString("image")
-        val Image = Uri.parse(uri)
-        showimage = findViewById<View>(R.id.showimage) as ImageView
-
-        // ImageView 영역에 이미지를 설정한다. MainActivity 에서 고른 사진을 설정하는 것임..
-        showimage!!.setImageURI(Image)
-
-
-        //Save_btn 기능 적용
-        Save_btn = findViewById<View>(R.id.save) as Button
-        Save_btn!!.setOnClickListener {
-            val resolver = contentResolver
-            try {
-                val instream = resolver.openInputStream(Image)
-                val imgBitmap = BitmapFactory.decodeStream(instream)
-                instream!!.close() // 스트림 닫아주기
-                saveBitmapToJpeg(imgBitmap) // 내부 저장소에 저장
-                //                    Toast.makeText(getApplicationContext(), "파일 불러오기 성공", Toast.LENGTH_SHORT).show();
-            } catch (e: Exception) {
-                Toast.makeText(applicationContext, "파일 불러오기 실패", Toast.LENGTH_SHORT).show()
-            }
-        }
-
-        //배경삭제 버튼
-        RemoveBgBtn = findViewById<ImageView>(R.id.removeBgBtn)
-        RemoveBgBtn!!.setOnClickListener{
-            removeBg()
         }
     }
 
