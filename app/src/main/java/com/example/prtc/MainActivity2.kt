@@ -28,13 +28,9 @@ import java.text.SimpleDateFormat
 import java.util.*
 
 class MainActivity2 : AppCompatActivity() {
-    var showimage: ImageView? = null
     private var Save_btn: Button? = null
-    private var RemoveBgBtn: ImageView? = null
-    val Image:Uri?=null
+    private var RemoveBgBtn: Button? = null
     var bitmapImg:Bitmap?=null
-
-
 
 
     //현재 시간 구하는 함수
@@ -61,30 +57,18 @@ class MainActivity2 : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main2)
 
-
-        //데이터 수신
-//        val intent = intent
-
         //받은 데이터를 Uri 형태로 변환
         val uri = intent.getStringExtra("image")
         val Image = Uri.parse(uri)
         binding = ActivityMain2Binding.inflate(layoutInflater)
         setContentView(binding.root)
         binding.showimage.setImageURI(Image)
-        // ImageView 영역에 이미지를 설정한다. MainActivity 에서 고른 사진을 설정하는 것임..
-//        showimage!!.setImageURI(Image)
-
-
-
 
         //Save_btn 기능 적용
         Save_btn = findViewById<View>(R.id.save) as Button
         Save_btn!!.setOnClickListener {
             val resolver = contentResolver
             try {
-//                val instream = resolver.openInputStream(Image)
-//                val imgBitmap = BitmapFactory.decodeStream(instream)
-//                instream!!.close() // 스트림 닫아주기
                 bitmapImg?.let { it1 -> saveBitmapToJpeg(it1) } // 내부 저장소에 저장
                 //                    Toast.makeText(getApplicationContext(), "파일 불러오기 성공", Toast.LENGTH_SHORT).show();
             } catch (e: Exception) {
@@ -93,7 +77,7 @@ class MainActivity2 : AppCompatActivity() {
         }
 
         //배경삭제 버튼
-        RemoveBgBtn = findViewById<View>(R.id.removeBgBtn) as ImageView
+        RemoveBgBtn = findViewById<View>(R.id.removeBgBtn) as Button
         RemoveBgBtn!!.setOnClickListener{
             removeBg()
         }

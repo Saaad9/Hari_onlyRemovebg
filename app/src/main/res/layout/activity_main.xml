@@ -48,7 +48,7 @@
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:gravity="center"
-            android:text="배경 변경 APP."
+            android:text="배경 삭제 APP."
             android:textSize="50dp"
             android:paddingBottom="300dp"
             app:layout_constraintBottom_toBottomOf="parent"

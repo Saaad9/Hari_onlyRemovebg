@@ -20,23 +20,6 @@ class MainActivity : AppCompatActivity() {
     private var go_Gallery: Button? = null
     var tvText: TextView? = null
 
-    //    //갤러리에서 이미지 선택한 후 startActivityForResult()함수로 재정의 된 onActivityResult 함수 호출
-//    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
-//        super.onActivityResult(requestCode, resultCode, data)
-//        val selectedImageUri = data!!.data
-//        val intent = Intent(applicationContext, MainActivity2::class.java)
-//
-//        //이름이 image 인 이미지주소값을 string으로 송신 받을때 string으로 받고 Uri로 변환하여 사용
-//        intent.putExtra("image", selectedImageUri.toString())
-//        startActivity(intent)
-//    }
-//    /데이터 수신
-//    val intent = intent
-//
-//    //받은 데이터를 Uri 형태로 변환
-//    val uri = intent.extras!!.getString("image")
-//    val Image = Uri.parse(uri)
-//    showimage = findViewById<View>(R.id.showimage) as ImageView
     private lateinit var binding: ActivityMainBinding
     private val imageResult =
         registerForActivityResult(
